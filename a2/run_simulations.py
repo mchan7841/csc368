@@ -15,7 +15,7 @@ def generate_int_sort(arg):
 def generate_spanning_forest(arg1, arg2):
     cmd = [
         "/u/csc368h/winter/pub/workloads/pbbsbench/testData/graphData/randLocalGraph",
-        "-d", "3", "-m", str(arg1), str(arg2), f"data/random_graph{arg2}"
+        "-d", "3", "-m", str(arg1), str(arg2), f"data/random_graph{arg1}"
     ]
     subprocess.run(cmd)
 
