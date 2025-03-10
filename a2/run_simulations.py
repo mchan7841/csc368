@@ -134,15 +134,17 @@ def run_all_simulations():
     # setup_data(DATA)
 
     # Baseline
-    run_simulation(DATA, "basic", "basic_cpu.py")
+    # run_simulation(DATA, "basic", "basic_cpu.py")
 
     # Prefetchers
-    run_simulation(DATA, "stride_prefetcher", "stride_prefetcher.py")
-    run_simulation(DATA, "tagged_prefetcher", "tagged_prefetcher.py")
+    # run_simulation(DATA, "stride_prefetcher_l1i", "stride_prefetcher_l1i.py")
+    # run_simulation(DATA, "stride_prefetcher_l1d", "stride_prefetcher_l1d.py")
+    # run_simulation(DATA, "tagged_prefetcher_l1i", "tagged_prefetcher_l1i.py")
+    # run_simulation(DATA, "tagged_prefetcher_l1d", "tagged_prefetcher_l1d.py")
 
     # Branch predictors
-    run_simulation(DATA, "local_predictor", "local_predictor.py")
-    run_simulation(DATA, "tournament_predictor", "tournament_predictor.py")
+    # run_simulation(DATA, "local_predictor", "local_predictor.py")
+    # run_simulation(DATA, "tournament_predictor", "tournament_predictor.py")
 
     # Isolate region of interest stats
     shutil.rmtree("filtered_outputs", ignore_errors=True)

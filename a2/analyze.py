@@ -46,32 +46,6 @@ def load_data():
     return pd.DataFrame(data=df)
 
 def create_graph(df, stat, cpus, name):
-    benchmarks = ['Integer Sort', 'Spanning Forest', 'LRS', 'Convex Hull', 'Nbody']
-
-    stats = [
-        [df["integer_sort"][cpus[0]][stat], df["integer_sort"][cpus[1]][stat], df["integer_sort"][cpus[2]][stat]],
-        [df["spanning_tree"][cpus[0]][stat], df["spanning_tree"][cpus[1]][stat], df["spanning_tree"][cpus[2]][stat]],
-        [df["lrs"][cpus[0]][stat], df["lrs"][cpus[1]][stat], df["lrs"][cpus[2]][stat]],
-        [df["convex_hull"][cpus[0]][stat], df["convex_hull"][cpus[1]][stat], df["convex_hull"][cpus[2]][stat]],
-        [df["nbody"][cpus[0]][stat], df["nbody"][cpus[1]][stat], df["nbody"][cpus[2]][stat]]
-    ]
-
-    bar_width = 0.25
-    x = np.arange(len(benchmarks))
-
-    fig, ax = plt.subplots(figsize=(12, 7))
-
-    rects1 = ax.bar(x - bar_width, [stat[0] for stat in stats], bar_width, label=cpus[0], color='#3498db')
-    rects2 = ax.bar(x, [stat[1] for stat in stats], bar_width, label=cpus[1], color='#e74c3c')
-    rects3 = ax.bar(x + bar_width, [stat[2] for stat in stats], bar_width, label=cpus[2], color='#2ecc71')
-
-    ax.set_xlabel('Benchmarks', fontsize=12)
-    ax.set_ylabel(stat, fontsize=12)
-    ax.set_title('CPU Performance Comparison Across Benchmarks', fontsize=14)
-    ax.set_xticks(x)
-    ax.set_xticklabels(benchmarks)
-    ax.legend()
-
     def add_labels(rects):
         for rect in rects:
             height = rect.get_height()
@@ -80,13 +54,34 @@ def create_graph(df, stat, cpus, name):
                         xytext=(0, 3),
                         textcoords="offset points",
                         ha='center', va='bottom')
+    benchmarks = ['Integer Sort', 'Spanning Forest', 'LRS', 'Convex Hull', 'Nbody']
 
-    add_labels(rects1)
-    add_labels(rects2)
-    add_labels(rects3)
+    stats = []
+    for benchmark in ['integer_sort', 'spanning_tree', 'lrs', 'convex_hull', 'nbody']:
+        benchmark_stats = []
+        for cpu in cpus:
+            benchmark_stats.append(df[benchmark][cpu][stat])
+        stats.append(benchmark_stats)
+
+    bar_width = 0.8 / len(cpus)
+    x = np.arange(len(benchmarks))
+
+    _, ax = plt.subplots(figsize=(12, 7))
+
+    for i, cpu in enumerate(cpus):
+        rects = ax.bar(x + i * bar_width - (len(cpus) - 1) * bar_width / 2, [stat[i] for stat in stats], bar_width, label=cpu)
+        add_labels(rects, ax)
+
+    ax.set_xlabel('Benchmarks', fontsize=12)
+    ax.set_ylabel(stat, fontsize=12)
+    ax.set_title('CPU Performance Comparison Across Benchmarks', fontsize=14)
+    ax.set_xticks(x)
+    ax.set_xticklabels(benchmarks)
+    ax.legend()
 
     plt.tight_layout()
     plt.savefig(f'graphs/{stat}_{name}.png')
+
 
 if __name__ == "__main__":
     df = load_data()
