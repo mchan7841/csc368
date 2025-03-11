@@ -70,19 +70,59 @@ def create_graph(df, stat, cpus, name):
 
     for i, cpu in enumerate(cpus):
         rects = ax.bar(x + i * bar_width - (len(cpus) - 1) * bar_width / 2, [stat[i] for stat in stats], bar_width, label=cpu)
-        add_labels(rects, ax)
+        add_labels(rects)
 
     ax.set_xlabel('Benchmarks', fontsize=12)
     ax.set_ylabel(stat, fontsize=12)
-    ax.set_title('CPU Performance Comparison Across Benchmarks', fontsize=14)
+    ax.set_title(f'{name} {stat.rsplit('.', 1)[-1]}', fontsize=14)
     ax.set_xticks(x)
     ax.set_xticklabels(benchmarks)
     ax.legend()
 
     plt.tight_layout()
-    plt.savefig(f'graphs/{stat}_{name}.png')
+    plt.savefig(f'graphs/{stat.rsplit('.', 1)[-1]}_{name}.png')
 
 
 if __name__ == "__main__":
     df = load_data()
-    create_graph(df, "system.cpu.cpi", ["basic", "tagged_prefetcher", "stride_prefetcher"], "prefetch")
+    
+    ## Prefetcher graphs
+    l1d_metrics = [
+        "system.cpu.l1d.prefetcher.demandMshrMisses",
+        "system.cpu.l1d.prefetcher.pfIssued",
+        "system.cpu.l1d.prefetcher.pfUnused",
+        "system.cpu.l1d.prefetcher.pfUseful",
+        "system.cpu.l1d.prefetcher.pfUsefulButMiss",
+        "system.cpu.l1d.prefetcher.accuracy",
+        "system.cpu.l1d.prefetcher.coverage",
+        "system.cpu.l1d.prefetcher.pfHitInCache",
+        "system.cpu.l1d.prefetcher.pfHitInMSHR",
+        "system.cpu.l1d.prefetcher.pfHitInWB",
+        "system.cpu.l1d.prefetcher.pfLate",
+        "system.cpu.l1d.prefetcher.pfIdentified",
+        "system.cpu.l1d.prefetcher.pfBufferHit",
+        "system.cpu.l1d.prefetcher.pfInCache",
+        "system.cpu.l1d.prefetcher.pfRemovedDemand",
+        "system.cpu.l1d.prefetcher.pfRemovedFull",
+    ]
+    l1i_metrics = [
+        "system.cpu.l1i.prefetcher.demandMshrMisses",
+        "system.cpu.l1i.prefetcher.pfIssued",
+        "system.cpu.l1i.prefetcher.pfUseful",
+        "system.cpu.l1i.prefetcher.pfUsefulButMiss",
+        "system.cpu.l1i.prefetcher.accuracy",
+        "system.cpu.l1i.prefetcher.coverage",
+        "system.cpu.l1i.prefetcher.pfHitInCache",
+        "system.cpu.l1i.prefetcher.pfHitInMSHR",
+        "system.cpu.l1i.prefetcher.pfHitInWB",
+        "system.cpu.l1i.prefetcher.pfLate",
+        "system.cpu.l1i.prefetcher.pfIdentified",
+        "system.cpu.l1i.prefetcher.pfBufferHit",
+        "system.cpu.l1i.prefetcher.pfInCache",
+        "system.cpu.l1i.prefetcher.pfRemovedDemand",
+        "system.cpu.l1i.prefetcher.pfRemovedFull"
+    ]
+    for metric in l1i_metrics:
+        create_graph(df, metric, ["tagged_prefetcher_l1i", "stride_prefetcher_l1i"], "l1i_prefetch")
+    for metric in l1d_metrics:
+        create_graph(df, metric, ["tagged_prefetcher_l1d", "stride_prefetcher_l1d"], "l1d_prefetch")
